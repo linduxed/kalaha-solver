@@ -24,31 +24,29 @@ generatePotList startingMarbles = [Pot (if n == 7 then 0 else startingMarbles) (
 -- Marble movement {{{
 {-
  - Initiates the movement. Currently only used to prevent erroneous starting pots.
- - TODO: "error" abort she execution completely, either handle the errors or do something else.
  -}
 makeStartingMove :: [Pot] -> Int -> ([Pot], Bool)
 makeStartingMove listOfPots startingPot
     | startingPot > 6                                       = error "Can't take from the store or opponents pots."
     | startingPot < 1                                       = error "Can't take from a pot before the first one."
     | isPotEmpty $ head $ drop (startingPot - 1) listOfPots = error "Can't start from an empty pot."
-    | otherwise                                             = moveHandler ((listOfPots, False), 0, True) startingPot
+    | otherwise                                             = moveMarbles ((listOfPots, False), 0, True) startingPot
 
 {-
  - Determines whether another lap is necessary.
- - Might need to tweak it to return whether we landed in a store.
  -}
-moveHandler :: (([Pot], Bool), Int, Bool) -> Int -> ([Pot], Bool)
-moveHandler ((listOfPots, landedInStore), marblesInHand, mustContinue) startingPot = resultingPotsAndStoreState where
+moveMarbles :: (([Pot], Bool), Int, Bool) -> Int -> ([Pot], Bool)
+moveMarbles ((listOfPots, landedInStore), marblesInHand, mustContinue) startingPot = resultingPotsAndStoreState where
     resultingPotsAndStoreState = lapLoop listOfPots landedInStore marblesInHand mustContinue startingPot
 
     lapLoop listOfPots landedInStoreLastLap marblesLeftFromLastLap mustContinue startingPot
         | not $ mustContinue = (listOfPots, landedInStoreLastLap)
-        | otherwise          = moveHandler (moveMarbles listOfPots startingPot marblesLeftFromLastLap) 0
+        | otherwise          = moveMarbles (moveOneLap listOfPots startingPot marblesLeftFromLastLap) 0
 
 {-
  - Does the actual movement of marbles.
  - The return type is huge and ugly because I don't know how to otherwise pass
- - the necessary information to moveHandler, which needs to determine whether
+ - the necessary information to moveMarbles, which needs to determine whether
  - another lap is necessary (and if so, how many marbles are still held in the
  - hand).
  - The top case in each of the loop sections only happens the first time the
@@ -56,8 +54,8 @@ moveHandler ((listOfPots, landedInStore), marblesInHand, mustContinue) startingP
  -
  - TODO: there must be a better way than having four near identical loops.
  -}
-moveMarbles :: [Pot] -> Int -> Int -> (([Pot], Bool), Int, Bool)
-moveMarbles listOfPots startingPot startingMarblesInHand = ((modifiedPots, landedInStore), marblesLeftInHand, mustDoAnotherLap) where
+moveOneLap :: [Pot] -> Int -> Int -> (([Pot], Bool), Int, Bool)
+moveOneLap listOfPots startingPot startingMarblesInHand = ((modifiedPots, landedInStore), marblesLeftInHand, mustDoAnotherLap) where
     modifiedPots       = untouchedFirstPots ++ moveLoop toTraverse startingMarblesInHand
     landedInStore      = storeLoop toTraverse startingMarblesInHand
     marblesLeftInHand  = marbleLoop toTraverse startingMarblesInHand
