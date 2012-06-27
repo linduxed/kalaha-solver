@@ -130,8 +130,8 @@ sortByMostInStore inList = sortBy compareMostInStore inList where
     compareMostInStore a b
         | marblesInStore a > marblesInStore b = GT
         | marblesInStore a < marblesInStore b = LT
-        | pathLength a     > pathLength b     = GT
-        | pathLength a     < pathLength b     = LT
+        | pathLength a     < pathLength b     = GT
+        | pathLength a     > pathLength b     = LT
         | otherwise                           = EQ
         where
             marblesInStore x = marbleCount $ head $ drop 6 $ fst x
