@@ -9,6 +9,10 @@ data Pot = Pot {
     isStore     :: Bool,
     position    :: Int
 } deriving (Show)
+
+data LapResult = LapContinue Int
+               | LapLandedInStore
+               | LapDone
 --}}}
 
 -- Helper functions {{{
@@ -30,18 +34,18 @@ makeStartingMove listOfPots startingPot
     | startingPot > 6                                       = error "Can't take from the store or opponents pots."
     | startingPot < 1                                       = error "Can't take from a pot before the first one."
     | isPotEmpty $ head $ drop (startingPot - 1) listOfPots = error "Can't start from an empty pot."
-    | otherwise                                             = moveMarbles ((listOfPots, False), 0, True) startingPot
+    | otherwise                                             = moveMarbles listOfPots startingPot 0
 
 {-
  - Determines whether another lap is necessary.
  -}
-moveMarbles :: (([Pot], Bool), Int, Bool) -> Int -> ([Pot], Bool)
-moveMarbles ((listOfPots, landedInStore), marblesInHand, mustContinue) startingPot = resultingPotsAndStoreState where
-    resultingPotsAndStoreState = lapLoop listOfPots landedInStore marblesInHand mustContinue startingPot
-
-    lapLoop listOfPots landedInStoreLastLap marblesLeftFromLastLap mustContinue startingPot
-        | not $ mustContinue = (listOfPots, landedInStoreLastLap)
-        | otherwise          = moveMarbles (moveOneLap listOfPots startingPot marblesLeftFromLastLap) 0
+moveMarbles :: [Pot] -> Int -> Int -> ([Pot], Bool)
+moveMarbles listOfPots startingPot marblesInHand =
+    let (newPots, resultOfLap) = moveOneLap listOfPots startingPot marblesInHand in
+    case resultOfLap of
+        LapContinue newMarblesInHand -> moveMarbles newPots 0 newMarblesInHand
+        LapLandedInStore             -> (newPots, True)
+        LapDone                      -> (newPots, False)
 
 {-
  - Does the actual movement of marbles.
@@ -52,19 +56,19 @@ moveMarbles ((listOfPots, landedInStore), marblesInHand, mustContinue) startingP
  - The top case in each of the loop sections only happens the first time the
  - loop is called (it's the only time no marbles are held).
  -}
-moveOneLap :: [Pot] -> Int -> Int -> (([Pot], Bool), Int, Bool)
-moveOneLap listOfPots startingPot startingMarblesInHand = ((modifiedPots, landedInStore), marblesLeftInHand, mustDoAnotherLap) where
-    (newPots, marblesLeftInHand, mustDoAnotherLap, landedInStore) = moveLoop toTraverse startingMarblesInHand []
-    (untouchedFirstPots, toTraverse)                              = splitAt (startingPot - 1) listOfPots
-    modifiedPots                                                  = untouchedFirstPots ++ newPots
+moveOneLap :: [Pot] -> Int -> Int -> ([Pot], LapResult)
+moveOneLap listOfPots startingPot startingMarblesInHand = (modifiedPots, resultOfLap) where
+    (newPots, resultOfLap)           = moveLoop toTraverse startingMarblesInHand []
+    (untouchedFirstPots, toTraverse) = splitAt (startingPot - 1) listOfPots
+    modifiedPots                     = untouchedFirstPots ++ newPots
 
-moveLoop [] marblesInHand outList = (reverse outList, marblesInHand, True, False)
+moveLoop [] marblesInHand outList = (reverse outList, LapContinue marblesInHand)
 moveLoop (x:xs) marblesInHand outList
     | marblesInHand == 0 = moveLoop xs (marbleCount x)     (returnEmptyPot x : outList)
     | marblesInHand >  1 = moveLoop xs (marblesInHand - 1) (returnPotWithOneMoreMarble x : outList)
     | marblesInHand /= 1 = error "marblesInHand was neither 0 nor >1, but somehow isn't 1"
-    | isStore x          = (finishedPots, 0, False, True)
-    | isPotEmpty x       = (finishedPots, 0, False, False)
+    | isStore x          = (finishedPots, LapLandedInStore)
+    | isPotEmpty x       = (finishedPots, LapDone)
     | otherwise          = moveLoop xs (marbleCount x + 1) (returnEmptyPot x : outList)
     where
         returnPotWithOneMoreMarble pot = pot { marbleCount = (marbleCount pot + 1) }
@@ -105,8 +109,8 @@ sortByMostInStore inList = sortBy compareMostInStore inList where
         | pathLength a     > pathLength b     = LT
         | otherwise                           = EQ
         where
-            marblesInStore x = marbleCount $ head $ drop 6 $ fst x
-            pathLength x     = length $ snd x
+            marblesInStore = marbleCount . head . drop 6 . fst
+            pathLength     = length . snd
 -- }}}
 
 -- Debug {{{
