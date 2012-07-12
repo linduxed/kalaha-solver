@@ -49,12 +49,6 @@ moveMarbles listOfPots startingPot marblesInHand =
 
 {-
  - Does the actual movement of marbles.
- - The return type is huge and ugly because I don't know how to otherwise pass
- - the necessary information to moveMarbles, which needs to determine whether
- - another lap is necessary (and if so, how many marbles are still held in the
- - hand).
- - The top case in each of the loop sections only happens the first time the
- - loop is called (it's the only time no marbles are held).
  -}
 moveOneLap :: [Pot] -> Int -> Int -> ([Pot], LapResult)
 moveOneLap listOfPots startingPot startingMarblesInHand = (modifiedPots, resultOfLap) where
@@ -62,6 +56,10 @@ moveOneLap listOfPots startingPot startingMarblesInHand = (modifiedPots, resultO
     (untouchedFirstPots, toTraverse) = splitAt (startingPot - 1) listOfPots
     modifiedPots                     = untouchedFirstPots ++ newPots
 
+{-
+ - The top non-base-case in only happens the first time the loop is called (it's
+ - the only time no marbles are held).
+ -}
 moveLoop [] marblesInHand outList = (reverse outList, LapContinue marblesInHand)
 moveLoop (x:xs) marblesInHand outList
     | marblesInHand == 0 = moveLoop xs (marbleCount x)     (returnEmptyPot x : outList)
