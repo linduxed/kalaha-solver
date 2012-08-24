@@ -1,6 +1,5 @@
 -- Imports {{{
 import Data.List
-import Data.Ord
 -- }}}
 
 -- Data types {{{
@@ -33,7 +32,7 @@ makeStartingMove :: [Pot] -> Int -> ([Pot], Bool)
 makeStartingMove listOfPots startingPot
     | startingPot > 6                                       = error "Can't take from the store or opponents pots."
     | startingPot < 1                                       = error "Can't take from a pot before the first one."
-    | isPotEmpty $ head $ drop (startingPot - 1) listOfPots = error "Can't start from an empty pot."
+    | isPotEmpty $ listOfPots !! (startingPot - 1) = error "Can't start from an empty pot."
     | otherwise                                             = moveMarbles listOfPots startingPot 0
 
 {-
@@ -60,6 +59,7 @@ moveOneLap listOfPots startingPot startingMarblesInHand = (modifiedPots, resultO
  - The top non-base-case in only happens the first time the loop is called (it's
  - the only time no marbles are held).
  -}
+moveLoop :: [Pot] -> Int -> [Pot] -> ([Pot], LapResult)
 moveLoop [] marblesInHand outList = (reverse outList, LapContinue marblesInHand)
 moveLoop (x:xs) marblesInHand outList
     | marblesInHand == 0 = moveLoop xs (marbleCount x)     (returnEmptyPot x : outList)
@@ -69,9 +69,9 @@ moveLoop (x:xs) marblesInHand outList
     | isPotEmpty x       = (finishedPots, LapDone)
     | otherwise          = moveLoop xs (marbleCount x + 1) (returnEmptyPot x : outList)
     where
-        returnPotWithOneMoreMarble pot = pot { marbleCount = (marbleCount pot + 1) }
+        returnPotWithOneMoreMarble pot = pot { marbleCount = marbleCount pot + 1 }
         returnEmptyPot pot             = pot { marbleCount = 0 }
-        finishedPots                   = (reverse outList) ++ [returnPotWithOneMoreMarble x] ++ xs
+        finishedPots                   = reverse outList ++ [returnPotWithOneMoreMarble x] ++ xs
 -- }}}
 
 -- Starting move branching {{{
@@ -90,16 +90,16 @@ pickAllPaths startingListOfPots = resultingPotsAndPaths where
     loopHelper :: [Int] -> [Pot] -> [Int] -> [([Pot], [Int])] -> [([Pot], [Int])]
     loopHelper [] _ _ returnList = returnList
     loopHelper (x:xs) listOfPots pathTaken returnList
-        | not $ landsInStore = loopHelper xs listOfPots pathTaken combinedList 
+        | not landsInStore = loopHelper xs listOfPots pathTaken combinedList
         | otherwise          = branchLoop resultingPots (pathTaken ++ [x]) ++ loopHelper xs listOfPots pathTaken returnList
         where
             (resultingPots, landsInStore) = makeStartingMove listOfPots x
-            combinedList                  = ((resultingPots, (pathTaken ++ [x])) : returnList)
+            combinedList                  = (resultingPots, pathTaken ++ [x]) : returnList
 -- }}}
 
 -- {{{ Sorting
 sortByMostInStore :: [([Pot], [Int])] -> [([Pot], [Int])]
-sortByMostInStore inList = sortBy compareMostInStore inList where
+sortByMostInStore = sortBy compareMostInStore where
     compareMostInStore a b
         | marblesInStore a > marblesInStore b = GT
         | marblesInStore a < marblesInStore b = LT
@@ -115,7 +115,7 @@ sortByMostInStore inList = sortBy compareMostInStore inList where
 -- Prints a string with marble counts. Store is highlighted.
 listMarbleCounts :: ([Pot], a) -> String
 listMarbleCounts (listOfPots, _) = potStatus where
-    potStatus = concat $ intersperse " - " (marbleAmounts listOfPots)
+    potStatus = intercalate " - " (marbleAmounts listOfPots)
 
     marbleAmounts [] = []
     marbleAmounts (x:xs)
