@@ -30,10 +30,10 @@ generatePotList startingMarbles = [Pot (if n == 7 then 0 else startingMarbles) (
  -}
 makeStartingMove :: [Pot] -> Int -> ([Pot], Bool)
 makeStartingMove listOfPots startingPot
-    | startingPot > 6                                       = error "Can't take from the store or opponents pots."
-    | startingPot < 1                                       = error "Can't take from a pot before the first one."
+    | startingPot > 6                              = error "Can't take from the store or opponents pots."
+    | startingPot < 1                              = error "Can't take from a pot before the first one."
     | isPotEmpty $ listOfPots !! (startingPot - 1) = error "Can't start from an empty pot."
-    | otherwise                                             = moveMarbles listOfPots startingPot 0
+    | otherwise                                    = moveMarbles listOfPots startingPot 0
 
 {-
  - Determines whether another lap is necessary.
