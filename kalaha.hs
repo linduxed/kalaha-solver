@@ -97,7 +97,7 @@ pickAllPaths startingListOfPots = resultingPotsAndPaths where
             combinedList                  = (resultingPots, pathTaken ++ [x]) : returnList
 -- }}}
 
--- {{{ Sorting
+-- Sorting {{{
 sortByMostInStore :: [([Pot], [Int])] -> [([Pot], [Int])]
 sortByMostInStore = sortBy compareMostInStore where
     compareMostInStore a b
