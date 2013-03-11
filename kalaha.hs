@@ -91,7 +91,7 @@ pickAllPaths startingListOfPots = resultingPotsAndPaths where
     loopHelper [] _ _ returnList = returnList
     loopHelper (x:xs) listOfPots pathTaken returnList
         | not landsInStore = loopHelper xs listOfPots pathTaken combinedList
-        | otherwise          = branchLoop resultingPots (pathTaken ++ [x]) ++ loopHelper xs listOfPots pathTaken returnList
+        | otherwise        = branchLoop resultingPots (pathTaken ++ [x]) ++ loopHelper xs listOfPots pathTaken returnList
         where
             (resultingPots, landsInStore) = makeStartingMove listOfPots x
             combinedList                  = (resultingPots, pathTaken ++ [x]) : returnList
