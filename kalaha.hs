@@ -56,7 +56,7 @@ moveOneLap listOfPots startingPot startingMarblesInHand = (modifiedPots, resultO
     modifiedPots                     = untouchedFirstPots ++ newPots
 
 {-
- - The top non-base-case in only happens the first time the loop is called (it's
+ - The top non-base-case only happens the first time the loop is called (it's
  - the only time no marbles are held).
  -}
 moveLoop :: [Pot] -> Int -> [Pot] -> ([Pot], LapResult)
@@ -76,9 +76,7 @@ moveLoop (x:xs) marblesInHand outList
 
 -- Starting move branching {{{
 pickAllPaths :: [Pot] -> [([Pot], [Int])]
-pickAllPaths startingListOfPots = resultingPotsAndPaths where
-    resultingPotsAndPaths = branchLoop startingListOfPots []
-
+pickAllPaths startingListOfPots = branchLoop startingListOfPots [] where
     branchLoop :: [Pot] -> [Int] -> [([Pot], [Int])]
     branchLoop listOfPots pathTaken
         | null validStartingPositions = [(listOfPots, pathTaken)]
