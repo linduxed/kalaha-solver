@@ -1,7 +1,6 @@
 -- Imports {{{
 import Data.List
 -- }}}
-
 -- Data types {{{
 data Pot = Pot {
     marbleCount :: Int,
@@ -13,7 +12,6 @@ data LapResult = LapContinue Int
                | LapLandedInStore
                | LapDone
 --}}}
-
 -- Helper functions {{{
 isPotEmpty :: Pot -> Bool
 isPotEmpty pot = marbleCount pot == 0
@@ -23,7 +21,6 @@ isPotEmpty pot = marbleCount pot == 0
 generatePotList :: Int -> [Pot]
 generatePotList startingMarbles = [Pot (if n == 7 then 0 else startingMarbles) (n == 7) n | n <- [1..13]]
 -- }}}
-
 -- Marble movement {{{
 {-
  - Initiates the movement. Currently only used to prevent erroneous starting pots.
@@ -73,7 +70,6 @@ moveLoop (x:xs) marblesInHand outList
         returnEmptyPot pot             = pot { marbleCount = 0 }
         finishedPots                   = reverse outList ++ [returnPotWithOneMoreMarble x] ++ xs
 -- }}}
-
 -- Starting move branching {{{
 pickAllPaths :: [Pot] -> [([Pot], [Int])]
 pickAllPaths startingListOfPots = branchLoop startingListOfPots [] where
@@ -94,7 +90,6 @@ pickAllPaths startingListOfPots = branchLoop startingListOfPots [] where
             (resultingPots, landsInStore) = makeStartingMove listOfPots x
             combinedList                  = (resultingPots, pathTaken ++ [x]) : returnList
 -- }}}
-
 -- Sorting {{{
 sortByMostInStore :: [([Pot], [Int])] -> [([Pot], [Int])]
 sortByMostInStore = sortBy compareMostInStore where
@@ -108,7 +103,6 @@ sortByMostInStore = sortBy compareMostInStore where
             marblesInStore = marbleCount . head . drop 6 . fst
             pathLength     = length . snd
 -- }}}
-
 -- Debug {{{
 -- Prints a string with marble counts. Store is highlighted.
 listMarbleCounts :: ([Pot], a) -> String
