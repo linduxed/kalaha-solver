@@ -1,7 +1,5 @@
--- Imports {{{
 import Data.List
--- }}}
--- Data types {{{
+
 data Pot = Pot {
     marbleCount :: Int,
     isStore     :: Bool,
@@ -11,8 +9,7 @@ data Pot = Pot {
 data LapResult = LapContinue Int
                | LapLandedInStore
                | LapDone
---}}}
--- Helper functions {{{
+
 isPotEmpty :: Pot -> Bool
 isPotEmpty pot = marbleCount pot == 0
 
@@ -20,8 +17,7 @@ isPotEmpty pot = marbleCount pot == 0
 -- never dropped there.
 generatePotList :: Int -> [Pot]
 generatePotList startingMarbles = [Pot (if n == 7 then 0 else startingMarbles) (n == 7) n | n <- [1..13]]
--- }}}
--- Marble movement {{{
+
 {-
  - Initiates the movement. Currently only used to prevent erroneous starting pots.
  -}
@@ -69,8 +65,7 @@ moveLoop (x:xs) marblesInHand outList
         returnPotWithOneMoreMarble pot = pot { marbleCount = marbleCount pot + 1 }
         returnEmptyPot pot             = pot { marbleCount = 0 }
         finishedPots                   = reverse outList ++ [returnPotWithOneMoreMarble x] ++ xs
--- }}}
--- Starting move branching {{{
+
 pickAllPaths :: [Pot] -> [([Pot], [Int])]
 pickAllPaths startingListOfPots = branchLoop startingListOfPots [] where
     branchLoop :: [Pot] -> [Int] -> [([Pot], [Int])]
@@ -89,8 +84,7 @@ pickAllPaths startingListOfPots = branchLoop startingListOfPots [] where
         where
             (resultingPots, landsInStore) = makeStartingMove listOfPots x
             combinedList                  = (resultingPots, pathTaken ++ [x]) : returnList
--- }}}
--- Sorting {{{
+
 sortByMostInStore :: [([Pot], [Int])] -> [([Pot], [Int])]
 sortByMostInStore = sortBy compareMostInStore where
     compareMostInStore a b
@@ -102,8 +96,7 @@ sortByMostInStore = sortBy compareMostInStore where
         where
             marblesInStore = marbleCount . head . drop 6 . fst
             pathLength     = length . snd
--- }}}
--- Debug {{{
+
 -- Prints a string with marble counts. Store is highlighted.
 listMarbleCounts :: ([Pot], a) -> String
 listMarbleCounts (listOfPots, _) = potStatus where
@@ -113,4 +106,3 @@ listMarbleCounts (listOfPots, _) = potStatus where
     marbleAmounts (x:xs)
         | isStore x = ("_" ++ show (marbleCount x) ++ "_") : marbleAmounts xs
         | otherwise = show (marbleCount x) : marbleAmounts xs
--- }}}
