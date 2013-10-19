@@ -1,0 +1,23 @@
+name: kalaha_solver
+version: 0.1.0.0
+synopsis:
+    Solves what the optimal first turn would be in a game of Swedish Kalaha.
+description:
+    The general idea is that you've got a board with fourteen pots. First a row
+    of six, being owned by one player, then another row of six owned by the
+    other player and in between these rows are two pots called "stores", one
+    belonging to each player. Each of the two rows start filled with a set
+    amount of marbles. The objective of the game is to end up with more marbles
+    in your store than your opponent by the end of the game.
+    This program returns the optimal first turn.
+homepage: https://github.com/linduxed/kalaha-solver
+license: WTFPL
+license-file: LICENSE
+author: linduxed
+maintainer: linduxed@gmail.com
+category: Game
+build-type: Simple
+cabal-version: >=1.8
+
+executable kalaha_solver
+    build-depends: base ==4.6.*
