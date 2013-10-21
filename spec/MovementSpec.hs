@@ -1,8 +1,8 @@
 module MovementSpec where
 
 import Test.Hspec
-import Movement
-import Board
+import Kalaha.Movement
+import Kalaha.Board
 
 main :: IO ()
 main = hspec $ do

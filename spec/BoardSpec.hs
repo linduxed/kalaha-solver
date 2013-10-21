@@ -3,7 +3,7 @@ module BoardSpec where
 import Test.Hspec
 import Test.QuickCheck
 import Control.Applicative
-import Board
+import Kalaha.Board
 
 main :: IO ()
 main = hspec $ do
