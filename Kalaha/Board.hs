@@ -4,7 +4,7 @@ data Pot = Pot {
     potPosition :: Int,
     potMarbles  :: Int,
     isStore  :: Bool
-} deriving (Show)
+} deriving (Show, Eq)
 
 type Board = [Pot]
 
