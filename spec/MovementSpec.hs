@@ -6,7 +6,7 @@ import Kalaha.Board
 
 main :: IO ()
 main = hspec $ do
-    describe "makeOneMove" $ do
+    describe "makeMove" $ do
         context "picking a marble which lands you in the store" $ do
             it "returns an altered board" $ do
                 let startingBoard = generateBoard 2
