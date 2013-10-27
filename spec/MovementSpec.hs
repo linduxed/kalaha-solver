@@ -1,6 +1,8 @@
 module MovementSpec where
 
 import Test.Hspec
+import Test.Hspec.Expectations.Contrib
+import Test.QuickCheck
 import Kalaha.Movement
 import Kalaha.Board
 
@@ -45,27 +47,8 @@ main = hspec $ do
 
                 makeMove startingBoard 1 `shouldBe` expectedBoard
 
-        context "picking a marble from outside of the board" $ do
-            it "raises an error" $ do
+        context "trying to start from anywhere but your pots" $ do
+            it "raises an error" $ property $ \x -> (x < 1 || x > 13) ==> do
                 let startingBoard = generateBoard 2
-                let expectedError = Left "makeMove: Starting position outside \
-                                         \of board."
 
-                makeMove startingBoard (-1) `shouldBe` expectedError
-                makeMove startingBoard 14 `shouldBe` expectedError
-
-        context "picking a marble from other player's pots" $ do
-            it "raises an error" $ do
-                let startingBoard = generateBoard 2
-                let expectedError = Left "makeMove: Starting position on \
-                                         \opponent's side of board."
-
-                makeMove startingBoard 8 `shouldBe` expectedError
-                makeMove startingBoard 13 `shouldBe` expectedError
-
-        context "trying to start from the store" $ do
-            it "raises an error" $ do
-                let startingBoard = generateBoard 2
-                let expectedError = Left "makeMove: Can't start from store."
-
-                makeMove startingBoard 7 `shouldBe` expectedError
+                makeMove startingBoard x `shouldSatisfy` isLeft
