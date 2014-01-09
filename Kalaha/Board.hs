@@ -3,7 +3,7 @@ module Kalaha.Board where
 data Pot = Pot {
     potPosition :: Int,
     potMarbles  :: Int,
-    isStore  :: Bool
+    isStore     :: Bool
 } deriving (Show, Eq)
 
 type Board = [Pot]
