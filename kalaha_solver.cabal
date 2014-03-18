@@ -1,4 +1,4 @@
-name: kalaha_solver
+name: kalaha-solver
 version: 0.1.0.0
 synopsis:
     Solves what the optimal first turn would be in a game of Swedish Kalaha.
