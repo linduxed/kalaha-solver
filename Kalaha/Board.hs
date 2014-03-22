@@ -1,4 +1,4 @@
-module Kalaha.Board where
+module Board where
 
 data Pot = Pot {
     potPosition :: Int,

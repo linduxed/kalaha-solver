@@ -1,13 +1,16 @@
-module KalahSpec where
+module KalahaSpec (main, spec) where
 
 import Test.Hspec
 import Test.Hspec.Expectations.Contrib
 import Test.QuickCheck
-import Kalaha.Board
-import Kalaha.Kalaha
+import Board
+import Kalaha
 
 main :: IO ()
-main = hspec $ do
+main = hspec spec
+
+spec :: Spec
+spec = do
     describe "makeStartingMove" $ do
         context "picking a marble which lands you in the store" $ do
             it "returns an altered board" $ do

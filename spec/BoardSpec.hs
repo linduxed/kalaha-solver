@@ -1,12 +1,15 @@
-module BoardSpec where
+module BoardSpec (main, spec) where
 
 import Test.Hspec
 import Test.QuickCheck
 import Control.Applicative
-import Kalaha.Board
+import Board
 
 main :: IO ()
-main = hspec $ do
+main = hspec spec
+
+spec :: Spec
+spec = do
     describe "generateBoard" $ do
         describe "returns a board with property" $ do
             it "has 13 pots" $ property $

@@ -1,3 +1,3 @@
-module Kalaha.Movement where
+module Movement where
 
-import Kalaha.Board
+import Board

@@ -1,7 +1,7 @@
-module Kalaha.Kalaha where
+module Kalaha where
 
-import Kalaha.Board
-import Kalaha.Movement
+import Board
+import Movement
 
 makeStartingMove :: Board -> Int -> Either String Board
 makeStartingMove board startPot
