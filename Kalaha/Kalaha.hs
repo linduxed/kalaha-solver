@@ -12,5 +12,4 @@ makeStartingMove board startPot
     | startPot > 7 && startPot <= 13 = Left "makeStartingMove: Starting\
                                             \ position on opponent's side of\
                                             \ board."
-    | otherwise                      = Right $ generateBoard 2
-
+    | otherwise                      = Right $ makeMove board startPot
